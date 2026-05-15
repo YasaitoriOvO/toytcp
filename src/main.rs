@@ -2,6 +2,7 @@ mod utils;
 mod ethernet;
 mod ipv4;
 mod ipv6;
+mod arp;
 
 // [AIGC]
 fn main() {
@@ -72,6 +73,25 @@ fn main() {
                         }
                         Err(error) => {
                             println!("IPv6 Error: {}", error);
+                        }
+                    }
+                }
+
+                0x0806 => {
+                    match arp::parse_arp_packet(&info.payload) {
+                        Ok(arp_packet) => {
+                            println!("ARP Hardware Type: {}", arp_packet.hardware_type);
+                            println!("ARP Protocol Type: {}", arp_packet.protocol_type);
+                            println!("ARP HLEN: {}", arp_packet.hlen);
+                            println!("ARP PLEN: {}", arp_packet.plen);
+                            println!("ARP Operation: {}", arp_packet.operation);
+                            println!("ARP SHA: {:02x?}", arp_packet.sha);
+                            println!("ARP SPA: {}", arp_packet.spa);
+                            println!("ARP THA: {:02x?}", arp_packet.tha);
+                            println!("ARP TPA: {}", arp_packet.tpa);
+                        }
+                        Err(error) => {
+                            println!("ARP Error: {}", error);
                         }
                     }
                 }
