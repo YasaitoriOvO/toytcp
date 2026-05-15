@@ -5,11 +5,11 @@
 
 我在研究以太网帧过后发现，每个标准的以太网帧都包含一个 Header 以及一个长度可以为 0 的 Payload，
 
-Header 中又包含：\n
-源 Mac 地址、目标 Mac 地址（也是判断是否为广播的依据）以及帧的类型（IPV4、IPV6、ARP 等）
+Header 中又包含：
+- 源 Mac 地址、目标 Mac 地址（也是判断是否为广播的依据）以及帧的类型（IPV4、IPV6、ARP 等）
 
-Payload 中包含：\n
-各个协议(IPV4、IPV6 等)的包
+Payload 中包含：
+- 各个协议(IPV4、IPV6 等)的包
 
 以下为图解
 ```
