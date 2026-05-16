@@ -1,29 +1,16 @@
-mod utils;
-mod ethernet;
-mod ipv4;
-mod ipv6;
-mod arp;
+use toytcp::{arp, ethernet, ipv4, ipv6};
+use toytcp::utils::read::read_hex_bytes_from_stdin;
 
-// [AIGC]
 fn main() {
-    let data = [
-        // Ethernet Header
-        0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-        0x10, 0x22, 0x33, 0x44, 0x55, 0x66,
-        0x08, 0x00, // EtherType = IPv4
+    println!("Input Ethernet frame bytes in hex, then press Ctrl+Z and Enter:");
 
-        // IPv4 Header
-        0x45,
-        0x00,
-        0x00, 0x14,
-        0x00, 0x00,
-        0x00, 0x00,
-        0x40,
-        0x06,
-        0x00, 0x00,
-        192, 168, 1, 10,
-        192, 168, 1, 1,
-    ];
+    let data = match read_hex_bytes_from_stdin() {
+        Ok(bytes) => bytes,
+        Err(error) => {
+            println!("Input Error: {}", error);
+            return;
+        }
+    };
 
     match ethernet::parse_ethernet_frame(&data) {
         Ok(info) => {
