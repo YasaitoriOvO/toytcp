@@ -1,3 +1,5 @@
+use std::fmt;
+
 // Mac 地址结构
 pub struct MacAddr {
     pub bytes: [u8; 6],
@@ -24,9 +26,12 @@ impl MacAddr {
     pub fn is_broadcast(&self) -> bool {
         self.bytes == [0xff, 0xff, 0xff, 0xff, 0xff, 0xff]
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!(
+impl fmt::Display for MacAddr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
             "{:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
             self.bytes[0],
             self.bytes[1],

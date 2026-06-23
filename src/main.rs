@@ -1,5 +1,6 @@
-use toytcp::{arp, ethernet, ipv4, ipv6};
+use toytcp::ethernet::{self, EtherType};
 use toytcp::utils::read::read_hex_bytes_from_stdin;
+use toytcp::{arp, ipv4, ipv6};
 
 fn main() {
     println!("Input Ethernet frame bytes in hex, then press Ctrl+Z and Enter:");
@@ -14,18 +15,17 @@ fn main() {
 
     match ethernet::parse_ethernet_frame(&data) {
         Ok(info) => {
-            println!("Original MAC: {}", info.original_mac);
-            println!("Target MAC: {}", info.target_mac);
-            println!("Is Broadcast Address: {}", info.is_broadcast);
+            println!("Source MAC: {}", info.source_mac);
+            println!("Target MAC: {}", info.dest_mac);
+            println!("Is Broadcast Address: {}", info.is_broadcast());
             println!("Ether Type: {}", info.ether_type);
-            println!("Ether Type String: {}", info.ether_type_str);
-            println!("Payload Length: {}", info.payload_length);
+            println!("Payload Length: {}", info.payload.len());
             println!("Payload: {:02x?}", info.payload);
 
             println!("\n--- Network Layer ---\n");
 
             match info.ether_type {
-                0x0800 => {
+                EtherType::Ipv4 => {
                     match ipv4::parse_ipv4_packet(&info.payload) {
                         Ok(ipv4_packet) => {
                             println!("IPv4 Version: {}", ipv4_packet.header.version);
@@ -45,7 +45,7 @@ fn main() {
                     }
                 }
 
-                0x86DD => {
+                EtherType::Ipv6 => {
                     match ipv6::parse_ipv6_packet(&info.payload) {
                         Ok(ipv6_packet) => {
                             println!("IPv6 Version: {}", ipv6_packet.header.version);
@@ -64,7 +64,7 @@ fn main() {
                     }
                 }
 
-                0x0806 => {
+                EtherType::Arp => {
                     match arp::parse_arp_packet(&info.payload) {
                         Ok(arp_packet) => {
                             println!("ARP Hardware Type: {}", arp_packet.hardware_type);

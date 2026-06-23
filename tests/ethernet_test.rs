@@ -1,4 +1,4 @@
-use toytcp::ethernet::parse_ethernet_frame;
+use toytcp::ethernet::{parse_ethernet_frame, EtherType};
 
 #[test]
 fn parses_ipv4_ethernet_frame() {
@@ -11,12 +11,12 @@ fn parses_ipv4_ethernet_frame() {
 
     let parsed = parse_ethernet_frame(&frame).unwrap();
 
-    assert_eq!(parsed.target_mac, "ff:ff:ff:ff:ff:ff");
-    assert_eq!(parsed.original_mac, "10:22:33:44:55:66");
-    assert!(parsed.is_broadcast);
-    assert_eq!(parsed.ether_type, 0x0800);
-    assert_eq!(parsed.ether_type_str, "IPv4");
-    assert_eq!(parsed.payload_length, 4);
+    assert_eq!(parsed.dest_mac.to_string(), "ff:ff:ff:ff:ff:ff");
+    assert_eq!(parsed.source_mac.to_string(), "10:22:33:44:55:66");
+    assert!(parsed.is_broadcast());
+    assert_eq!(parsed.ether_type, EtherType::Ipv4);
+    assert_eq!(parsed.ether_type.to_string(), "IPv4");
+    assert_eq!(parsed.payload.len(), 4);
     assert_eq!(parsed.payload, vec![0xde, 0xad, 0xbe, 0xef]);
 }
 

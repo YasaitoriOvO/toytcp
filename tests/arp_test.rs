@@ -1,3 +1,4 @@
+use std::net::Ipv4Addr;
 use toytcp::arp::parse_arp_packet;
 
 #[test]
@@ -21,9 +22,9 @@ fn parses_valid_arp_packet() {
     assert_eq!(parsed.plen, 4);
     assert_eq!(parsed.operation, 1);
     assert_eq!(parsed.sha, [0x10, 0x22, 0x33, 0x44, 0x55, 0x66]);
-    assert_eq!(parsed.spa, "192.168.1.10");
+    assert_eq!(parsed.spa, Ipv4Addr::new(192, 168, 1, 10));
     assert_eq!(parsed.tha, [0, 0, 0, 0, 0, 0]);
-    assert_eq!(parsed.tpa, "192.168.1.1");
+    assert_eq!(parsed.tpa, Ipv4Addr::new(192, 168, 1, 1));
 }
 
 #[test]

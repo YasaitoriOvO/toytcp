@@ -1,3 +1,4 @@
+use std::net::Ipv6Addr;
 use toytcp::ipv6::parse_ipv6_packet;
 
 #[test]
@@ -22,8 +23,14 @@ fn parses_valid_ipv6_packet() {
     assert_eq!(parsed.header.payload_length, 4);
     assert_eq!(parsed.header.next_header, 17);
     assert_eq!(parsed.header.hop_limit, 64);
-    assert_eq!(parsed.header.source_ip, "2001:db8:0:0:0:0:0:1");
-    assert_eq!(parsed.header.destination_ip, "2001:db8:0:0:0:0:0:2");
+    assert_eq!(
+        parsed.header.source_ip,
+        Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 1)
+    );
+    assert_eq!(
+        parsed.header.destination_ip,
+        Ipv6Addr::new(0x2001, 0x0db8, 0, 0, 0, 0, 0, 2)
+    );
     assert_eq!(parsed.payload, vec![0xde, 0xad, 0xbe, 0xef]);
 }
 

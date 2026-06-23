@@ -1,6 +1,8 @@
 /**
  * IPV6 包解析
  */
+use std::net::Ipv6Addr;
+
 pub struct Ipv6Header {
     pub version: u8,
     pub traffic_class: u8,
@@ -8,8 +10,8 @@ pub struct Ipv6Header {
     pub payload_length: u16,
     pub next_header: u8,
     pub hop_limit: u8,
-    pub source_ip: String,
-    pub destination_ip: String,
+    pub source_ip: Ipv6Addr,
+    pub destination_ip: Ipv6Addr,
 }
 
 pub struct Ipv6Packet {
@@ -38,8 +40,13 @@ pub fn parse_ipv6_packet(packet: &[u8]) -> Result<Ipv6Packet, String> {
     let next_header = packet[6];
     let hop_limit = packet[7];
 
-    let source_ip = format_ipv6_address(&packet[8..24]);
-    let destination_ip = format_ipv6_address(&packet[24..40]);
+    let mut src = [0u8; 16];
+    src.copy_from_slice(&packet[8..24]);
+    let source_ip = Ipv6Addr::from(src);
+
+    let mut dst = [0u8; 16];
+    dst.copy_from_slice(&packet[24..40]);
+    let destination_ip = Ipv6Addr::from(dst);
 
     let total_length = 40 + payload_length as usize;
 
@@ -62,15 +69,4 @@ pub fn parse_ipv6_packet(packet: &[u8]) -> Result<Ipv6Packet, String> {
         },
         payload,
     })
-}
-
-fn format_ipv6_address(bytes: &[u8]) -> String {
-    let mut parts = Vec::new();
-
-    for i in (0..16).step_by(2) {
-        let part = u16::from_be_bytes([bytes[i], bytes[i + 1]]);
-        parts.push(format!("{:x}", part));
-    }
-
-    parts.join(":")
 }

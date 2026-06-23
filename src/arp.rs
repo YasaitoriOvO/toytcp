@@ -1,16 +1,18 @@
 /**
  * ARP 协议包解析
  */
+use std::net::Ipv4Addr;
+
 pub struct ArpPacket {
     pub hardware_type: u16,
     pub protocol_type: u16,
     pub hlen: u8,
     pub plen: u8,
     pub operation: u16,
-    pub sha: [u8; 6], // 源 Mac 地址
-    pub spa: String, // 源 IP 地址
-    pub tha: [u8; 6], // 目标 Mac 地址
-    pub tpa: String, // 目标 IP 地址
+    pub sha: [u8; 6],  // 源 Mac 地址
+    pub spa: Ipv4Addr, // 源 IP 地址
+    pub tha: [u8; 6],  // 目标 Mac 地址
+    pub tpa: Ipv4Addr, // 目标 IP 地址
 }
 
 pub fn parse_arp_packet(packet: &[u8]) -> Result<ArpPacket, String> {
@@ -29,15 +31,9 @@ pub fn parse_arp_packet(packet: &[u8]) -> Result<ArpPacket, String> {
     }
 
     let sha = [packet[8], packet[9], packet[10], packet[11], packet[12], packet[13]];
-    let spa = format!(
-        "{}.{}.{}.{}",
-        packet[14], packet[15], packet[16], packet[17]
-    );
+    let spa = Ipv4Addr::new(packet[14], packet[15], packet[16], packet[17]);
     let tha = [packet[18], packet[19], packet[20], packet[21], packet[22], packet[23]];
-    let tpa = format!(
-        "{}.{}.{}.{}",
-        packet[24], packet[25], packet[26], packet[27]
-    );
+    let tpa = Ipv4Addr::new(packet[24], packet[25], packet[26], packet[27]);
 
     Ok(ArpPacket {
         hardware_type,

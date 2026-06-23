@@ -1,3 +1,4 @@
+use std::net::Ipv4Addr;
 use toytcp::ipv4::parse_ipv4_packet;
 
 #[test]
@@ -25,8 +26,8 @@ fn parses_valid_ipv4_packet() {
     assert_eq!(parsed.header.ttl, 64);
     assert_eq!(parsed.header.protocol, 6);
     assert_eq!(parsed.header.header_checksum, 0x1234);
-    assert_eq!(parsed.header.source_ip, "192.168.1.10");
-    assert_eq!(parsed.header.destination_ip, "192.168.1.1");
+    assert_eq!(parsed.header.source_ip, Ipv4Addr::new(192, 168, 1, 10));
+    assert_eq!(parsed.header.destination_ip, Ipv4Addr::new(192, 168, 1, 1));
     assert_eq!(parsed.payload, vec![0xde, 0xad, 0xbe, 0xef]);
 }
 

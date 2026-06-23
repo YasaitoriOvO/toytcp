@@ -1,6 +1,8 @@
 /**
  * IPV4 包解析
  */
+use std::net::Ipv4Addr;
+
 pub struct Ipv4Header {
     pub version: u8,
     pub ihl: u8,
@@ -9,8 +11,8 @@ pub struct Ipv4Header {
     pub ttl: u8,
     pub protocol: u8,
     pub header_checksum: u16,
-    pub source_ip: String,
-    pub destination_ip: String,
+    pub source_ip: Ipv4Addr,
+    pub destination_ip: Ipv4Addr,
 }
 pub struct Ipv4Packet {
     pub header: Ipv4Header,
@@ -54,15 +56,8 @@ pub fn parse_ipv4_packet(packet: &[u8]) -> Result<Ipv4Packet, String> {
     let protocol = packet[9];
 
     let header_checksum = u16::from_be_bytes([packet[10], packet[11]]);
-    let source_ip = format!(
-        "{}.{}.{}.{}",
-        packet[12], packet[13], packet[14], packet[15]
-    );
-
-    let destination_ip = format!(
-        "{}.{}.{}.{}",
-        packet[16], packet[17], packet[18], packet[19]
-    );
+    let source_ip = Ipv4Addr::new(packet[12], packet[13], packet[14], packet[15]);
+    let destination_ip = Ipv4Addr::new(packet[16], packet[17], packet[18], packet[19]);
 
     // 切出载荷
     let payload = packet[header_length..total_length as usize].to_vec();
